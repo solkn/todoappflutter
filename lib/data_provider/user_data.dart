@@ -13,7 +13,7 @@ class UserDataProvider {
 
   Util util =  Util();
   Future<List<User>> getUsers() async {
-    const uri = 'http://192.168.137.1:8080/v1/admin/users';
+    const uri = 'https://mtodo-api.herokuapp.com/api/v1/users/';
     List<User> users;
     try {
       String token = await util.getUserToken();
@@ -41,7 +41,7 @@ class UserDataProvider {
 
   Future<User> login(User user) async {
     User user1;
-    const urlLogin = 'http://192.168.137.1:8080/v1/user/login';
+    const urlLogin = 'https://mtodo-api.herokuapp.com/api/v1/auth';
     try {
       final response = await http.post(
         Uri.parse(urlLogin),
@@ -75,29 +75,12 @@ class UserDataProvider {
   }
 
   Future<User> signUp(User user) async {
-    final urlEmailCheck = 'http://192.168.137.1:8080/v1/user/email/${user.email}';
-    final urlPhoneCheck = 'http://192.168.137.1:8080/v1/user/phone/${user.phone}';
-    final urlPostUser = 'http://192.168.137.1:8080/v1/user/signup';
+  
+    final urlPostUser = 'https://mtodo-api.herokuapp.com/api/v1/users/';
     User user1;
     try {
-      var response = await httpClient.get(
-        Uri.parse(urlEmailCheck),
-      );
-      if (response.statusCode == 200) {
-        final isEmailExist = json.decode(response.body) as bool;
-        if (isEmailExist) {
-          throw HttpException('Email already exists!');
-        } else {
-          response = await httpClient.get(Uri.parse(urlPhoneCheck));
-
-          if (response.statusCode == 500) {
-            throw HttpException('Error occurred !');
-          } else {
-            final isPhoneExist = json.decode(response.body) as bool;
-            if (isPhoneExist) {
-              throw HttpException('Phone No already exists!');
-            } else {
-              response = await httpClient.post(
+      
+             final response = await httpClient.post(
                 Uri.parse(urlPostUser),
                 body: json.encode({
                   'id': user.id,
@@ -122,12 +105,6 @@ class UserDataProvider {
               } else {
                 throw HttpException('Error occurred');
               }
-            }
-          }
-        }
-      } else {
-        throw HttpException('Error occurred !');
-      }
     } catch (e) {
       throw e;
     }
@@ -136,7 +113,7 @@ class UserDataProvider {
 
   Future<User> updateUser(User user) async {
     User updated;
-    final url = 'http://192.168.137.1:8080/user/users/${user.id}';
+    final url = 'https://mtodo-api.herokuapp.com/api/v1/users/${user.id}';
     try {
       String token = await util.getUserToken();
       String expiry = await util.getExpiryTime();
@@ -170,8 +147,8 @@ class UserDataProvider {
 
   Future<User> updateUserPassword(User user, String oldPassword) async {
     User updated;
-    final url = 'http://192.168.137.1:8080/v1/user/users/${user.id}';
-    final urlCheckPassword = 'http://192.168.137.1:8080/v1/user/password/${user.id}';
+    final url = 'https://mtodo-api.herokuapp.com/api/v1/users/${user.id}';
+    final urlCheckPassword = 'https://mtodo-api.herokuapp.com/api/v1/users/${user.id}';
     try {
       String token = await util.getUserToken();
       String expiry = await util.getExpiryTime();
